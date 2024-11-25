@@ -17,7 +17,6 @@ class Node:
 
 class BST:
     def __init__(self):
-        self.length = 0
         self.root = None
         self.last = None
 
@@ -241,24 +240,27 @@ class AVL_T(BST):
 
 
 class RBT(BST):
-    pass
+    def update_params(self):
+        if self.last == self.root:
+            self.last.color = "Black"
+        else:
+            walking_node = self.last
+            while walking_node is not None:
+                if walking_node.parent.color == "Red":
+
 
 # test_tree = BST()
-test_tree = AVL_T()
-nums = [random.randint(0, 100) for i in range(10)]
-print(nums)
-# nums = [84, 793, 89, 874, 61, 937, 113, 928, 797, 665, 481, 374, 45, 822, 842, 616, 50, 488, 649, 734]
-for i in nums:
-    test_tree.insert(i, str(i))
-    test_tree.update_params()
-    # test_tree.balancing()
-    # print()
-    # test_tree.print_tree()
-
+for i in range(1000, 1000000, 10000):
+    test_tree = AVL_T()
+    nums = [random.randint(0, 1000000000) for _ in range(i)]
+    for i in nums:
+        test_tree.insert(i, str(i))
+        test_tree.update_params()
+    print(test_tree.root.height)
 # test_tree.print_tree()
-for i in nums:
-    print(i, test_tree.find(i))
-print("--------------")
+# for i in nums:
+#     print(i, test_tree.find(i))
+# print("--------------")
 
 # for i in nums:
 #     print('--', i)
