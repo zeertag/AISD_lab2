@@ -1,4 +1,7 @@
 from Node import Node
+from queue import Queue
+from colorama import Back, Style
+
 
 class BST:
     def __init__(self):
@@ -134,3 +137,33 @@ class BST:
                 walking_node = walking_node.right_child
             else:
                 walking_node = walking_node.left_child
+
+    # Обходы
+    def inorderWalk(self, node: Node):
+        if node == None:
+            return
+        self.inorderWalk(node.left_child)
+        print(node.key, end=' ')
+        self.inorderWalk(node.right_child)
+
+    def wideWalk(self, node: Node, type=0):
+        q = Queue()
+        q.put(node)
+        while not q.empty():
+            k = q.qsize()
+            for i in range(k):
+                elem = q.get()
+                if type == 0:
+                    print(elem.key, end=' ')
+                elif type == 1:
+                    print(f'{elem.key} (Height: {elem.height}, Balance: {elem.balance})', end=' ')
+                else:
+                    if elem.color == "Black":
+                        print(Back.BLACK + str(elem.key) + Style.RESET_ALL, end=' ')
+                    else:
+                        print(Back.RED + str(elem.key) + Style.RESET_ALL, end=' ')
+                if elem.left_child is not None:
+                    q.put(elem.left_child)
+                if elem.right_child is not None:
+                    q.put(elem.right_child)
+            print()
