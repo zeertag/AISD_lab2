@@ -52,6 +52,51 @@ class RBT(BST):
                             walking_node = self.left_rotate(walking_node)
             self.root.color = "Black"
 
+    def balancing(self):
+        # ... (rest of the function remains unchanged)
+
+        while node != self.root and node.color == "Black":
+            sibling = self.get_sibling(node)
+
+            # Handle the case when node is the root
+            if node.parent is None:
+                break
+
+            # Case 1: Sibling is red
+            if sibling and sibling.color == "Red":
+                sibling.color = "Black"  # Change sibling to black
+                node.parent.color = "Red"  # Change parent to red
+                self.rotate(node, sibling)  # Perform rotation based on node position
+                node = sibling  # Update node for next iteration
+
+            # Case 2: Sibling is black and both children are black
+            elif (sibling is None or sibling.left_child is None or sibling.left_child.color == "Black") and \
+                    (sibling is None or sibling.right_child is None or sibling.right_child.color == "Black"):
+                if sibling:
+                    sibling.color = "Red"  # Change sibling to red (prepare for borrow)
+                node = node.parent  # Move up the tree
+
+            # Case 3: Sibling is black and has a red right child
+            elif sibling and (sibling.right_child is None or sibling.right_child.color == "Black"):
+                if sibling.left_child:
+                    sibling.left_child.color = "Black"  # Change left child to black
+                sibling.color = "Red"  # Change sibling to red
+                self.rotate(node, sibling, "left")  # Left rotation based on node position
+                sibling = self.get_sibling(node)  # Update sibling for next iteration
+
+            # Case 4: Sibling is black and has a red left child
+            else:
+                sibling.color = node.parent.color  # Change sibling color to parent's color
+                node.parent.color = "Black"  # Change parent to black
+                if sibling.right_child:
+                    sibling.right_child.color = "Black"  # Change right child to black
+                self.rotate(node, sibling, "right")  # Right rotation based on node position
+                node = self.root  # Update node to root for next iteration (balancing complete)
+
+            # After balancing, ensure root is black
+            if node:
+                node.color = "Black"
+
     def get_relatives(self, node):
         if node.parent.parent is None:
             uncle = None
@@ -101,3 +146,17 @@ class RBT(BST):
             self.root = b
 
         return b
+
+    def get_sibling(self, node):
+        if node.parent is None:
+            return None
+        if node == node.parent.left_child:
+            return node.parent.right_child
+        else:
+            return node.parent.left_child
+
+    def rotate(self, node, sibling, direction="right"):
+        if direction == "right":
+            self.right_rotate(node)
+        else:
+            self.left_rotate(node)

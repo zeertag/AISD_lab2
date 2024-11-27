@@ -14,13 +14,18 @@ from Red_Black import RBT
 
 
 test_tree = RBT()
-nums = [random.randint(0, 100) for _ in range(10)]
-# nums = [100, 50, 150, 25, 75, 125, 175]
+# nums = [random.randint(0, 100) for _ in range(10)]
+nums = [100, 50, 150, 25, 75, 125, 175]
 print(nums)
 for j in nums:
     msg = test_tree.insert(j, str(j))
     if msg != "Key is already exist":
         test_tree.update_params()
 
-# test_tree.inorderWalk(test_tree.root)
-test_tree.wideWalk(test_tree.root, 2)
+
+for j in nums:
+    test_tree.delete(j)
+    test_tree.balancing()
+    test_tree.wideWalk(test_tree.root, 2)
+    print()
+    print()
