@@ -114,56 +114,86 @@ class BST:
                     temp_node.left_child = walking_node.left_child
                     walking_node.left_child.parent = temp_node
                     temp_node.parent = walking_node.parent
-
-                    # old_parent = temp_node.parent
-                    # old_child = temp_node.right_child
-                    # temp_node.parent = walking_node.parent
-                    # temp_node.left_child = walking_node.left_child
-                    # if temp_node == walking_node.right_child:
-                    #     temp_node.right_child = walking_node.right_child.right_child
-                    # else:
-                    #     temp_node.right_child = walking_node.right_child
-                    #
-                    # temp_node.left_child.parent = temp_node
-                    # if temp_node.right_child is not None:
-                    #     temp_node.right_child.parent = temp_node
-
-                    # old_parent.left_child = old_child
-                    # self.root.parent = None
-
-                    # self.last = temp_node.parent
                     return
             if walking_node.key < key:
                 walking_node = walking_node.right_child
             else:
                 walking_node = walking_node.left_child
+            if walking_node is None:
+                print("No key found")
 
     # Обходы
-    def inorderWalk(self, node: Node):
-        if node == None:
+    #симметричный
+    def inorderWalk(self, node):
+        if node is None:
             return
         self.inorderWalk(node.left_child)
-        print(node.key, end=' ')
+        print(node.data, end=' ')
         self.inorderWalk(node.right_child)
 
-    def wideWalk(self, node: Node, type=0):
+    #прямой
+    def preorderWalk(self, node):
+        if node is None:
+            return
+        print(node.data, end=' ')
+        self.preorderWalk(node.left_child)
+        self.preorderWalk(node.right_child)
+
+    #обратный
+    def postorderWalk(self, node):
+        if node is None:
+            return
+        self.postorderWalk(node.left_child)
+        self.postorderWalk(node.right_child)
+        print(node.data, end=' ')
+
+    def wideWalk(self, node, type=0):
+        if node is None:
+            print("Tree is empty")
+            return
         q = Queue()
         q.put(node)
         while not q.empty():
             k = q.qsize()
             for i in range(k):
                 elem = q.get()
-                if type == 0:
-                    print(elem.key, end=' ')
-                elif type == 1:
-                    print(f'{elem.key} (Height: {elem.height}, Balance: {elem.balance})', end=' ')
-                else:
-                    if elem.color == "Black":
-                        print(Back.BLACK + str(elem.key) + Style.RESET_ALL, end=' ')
+                if elem is not None:
+                    if type == 0:
+                        print(elem.key, end=' ')
+                    elif type == 1:
+                        print(f'{elem.key} (Height: {elem.height}, Balance: {elem.balance})', end=' ')
                     else:
-                        print(Back.RED + str(elem.key) + Style.RESET_ALL, end=' ')
-                if elem.left_child is not None:
-                    q.put(elem.left_child)
-                if elem.right_child is not None:
-                    q.put(elem.right_child)
+                        if elem.color == "Black":
+                            print(Back.BLACK + str(elem.key) + Style.RESET_ALL, end=' ')
+                        else:
+                            print(Back.RED + str(elem.key) + Style.RESET_ALL, end=' ')
+                    if elem.left_child is not None:
+                        q.put(elem.left_child)
+                    if elem.right_child is not None:
+                        q.put(elem.right_child)
             print()
+
+    def print_tree_with_color(self, node=None, level=0, prefix="Root: "):
+        """Выводит дерево с отступами и цветом узлов (черный или красный)."""
+        if node is None:
+            node = self.root  # если не передан узел, начинаем с корня
+
+        if node is not None:
+            # Выводим цветной ключ узла
+            if node.color == "Black":
+                print(" " * (level * 4) + prefix + Back.BLACK + str(node.key) + Style.RESET_ALL)
+            else:
+                print(" " * (level * 4) + prefix + Back.RED + str(node.key) + Style.RESET_ALL)
+
+            # Рекурсивный вызов для левого и правого детей
+            if node.left_child is not None or node.right_child is not None:
+                if node.left_child is not None:
+                    self.print_tree_with_color(node.left_child, level + 1, "L--- ")
+                else:
+                    print(" " * ((level + 1) * 4) + "L--- None")
+                if node.right_child is not None:
+                    self.print_tree_with_color(node.right_child, level + 1, "R--- ")
+                else:
+                    print(" " * ((level + 1) * 4) + "R--- None")
+        else:
+            print("Tree is empty")
