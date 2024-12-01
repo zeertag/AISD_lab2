@@ -1,66 +1,60 @@
 from BST import BST
-from Node import Node
 
 
 class RBT(BST):
     def update_params(self):
         if self.last == self.root:
-            self.last.color = "Black"  # Корень всегда черный
+            self.last.color = "Black"
             return
 
         node = self.last
 
-        # Когда родитель красный, необходимо корректировать
         while node != self.root and node.parent.color == "Red":
             uncle, grandparent = self.get_relatives(node)
 
-            # Случай 1: родитель — левый ребенок, дядя — красный
             if node.parent == grandparent.left_child:
-                if uncle is not None and uncle.color == "Red":
-                    node.parent.color = "Black"
-                    uncle.color = "Black"
-                    grandparent.color = "Red"
-                    node = grandparent  # Переходим к дедушке
-                else:
-                    # Случай 2: если текущий узел — левый ребенок
-                    if node == node.parent.left_child:
-                        node.parent.color = "Black"
-                        grandparent.color = "Red"
-                        node = node.parent.parent
-                        self.right_rotate(grandparent)
-                    else:  # Случай 3: если текущий узел — правый ребенок
-                        node = node.parent
-                        self.left_rotate(node)
-                        node.parent.color = "Black"
-                        grandparent.color = "Red"
-                        self.right_rotate(grandparent)
-            else:  # Если родитель — правый ребенок
                 if uncle is not None and uncle.color == "Red":
                     node.parent.color = "Black"
                     uncle.color = "Black"
                     grandparent.color = "Red"
                     node = grandparent
                 else:
-                    # Случай 4: если текущий узел — правый ребенок
+                    if node == node.parent.left_child:
+                        node.parent.color = "Black"
+                        grandparent.color = "Red"
+                        node = node.parent.parent
+                        self.right_rotate(grandparent)
+                    else:
+                        node = node.parent
+                        self.left_rotate(node)
+                        node.parent.color = "Black"
+                        grandparent.color = "Red"
+                        self.right_rotate(grandparent)
+            else:
+                if uncle is not None and uncle.color == "Red":
+                    node.parent.color = "Black"
+                    uncle.color = "Black"
+                    grandparent.color = "Red"
+                    node = grandparent
+                else:
                     if node == node.parent.right_child:
                         node.parent.color = "Black"
                         grandparent.color = "Red"
                         node = node.parent.parent
                         self.left_rotate(grandparent)
-                    else:  # Случай 5: если текущий узел — левый ребенок
+                    else:
                         node = node.parent
                         self.right_rotate(node)
                         node.parent.color = "Black"
                         grandparent.color = "Red"
                         self.left_rotate(grandparent)
 
-        self.root.color = "Black"  # Корень всегда черный
+        self.root.color = "Black"
 
     def rbt_delete(self, key):
         walking_node = self.root
         node_to_delete = None
 
-        # Поиск узла для удаления
         while walking_node is not None:
             if walking_node.key == key:
                 node_to_delete = walking_node
@@ -74,7 +68,6 @@ class RBT(BST):
             print("Key not found")
             return
 
-        # Если у узла есть два потомка, заменяем его на преемника
         if node_to_delete.left_child is not None and node_to_delete.right_child is not None:
             walking_node = node_to_delete.right_child
             while walking_node.left_child is not None:
@@ -85,7 +78,6 @@ class RBT(BST):
 
             node_to_delete = walking_node
 
-        # Если узел — лист
         if node_to_delete.left_child is None and node_to_delete.right_child is None:
             if node_to_delete.color == "Red":
                 if node_to_delete.parent:
@@ -103,7 +95,6 @@ class RBT(BST):
                 else:
                     node_to_delete.parent.right_child = None
 
-        # Если у узла есть только левый потомок
         elif node_to_delete.left_child is not None:
             node_to_delete.left_child.color = "Black"
             node_to_delete.left_child.parent = node_to_delete.parent
@@ -115,7 +106,6 @@ class RBT(BST):
                 else:
                     node_to_delete.parent.right_child = node_to_delete.left_child
 
-        # Если у узла есть только правый потомок
         elif node_to_delete.right_child is not None:
             node_to_delete.right_child.color = "Black"
             node_to_delete.right_child.parent = node_to_delete.parent
@@ -138,9 +128,9 @@ class RBT(BST):
                     self.left_rotate(node.parent)
                     sibling = node.parent.right_child
 
-                if (sibling is None or sibling.color == "Black") and \
-                        (sibling is None or sibling.left_child is None or sibling.left_child.color == "Black") and \
-                        (sibling is None or sibling.right_child is None or sibling.right_child.color == "Black"):
+                if (sibling is None or sibling.color == "Black") and (
+                        sibling is None or sibling.left_child is None or sibling.left_child.color == "Black") and (
+                        sibling is None or sibling.right_child is None or sibling.right_child.color == "Black"):
                     if sibling:
                         sibling.color = "Red"
                     node = node.parent
@@ -173,9 +163,9 @@ class RBT(BST):
                     self.right_rotate(node.parent)
                     sibling = node.parent.left_child
 
-                if (sibling is None or sibling.color == "Black") and \
-                        (sibling.left_child is None or sibling.left_child.color == "Black") and \
-                        (sibling.right_child is None or sibling.right_child.color == "Black"):
+                if (sibling is None or sibling.color == "Black") and (
+                        sibling.left_child is None or sibling.left_child.color == "Black") and (
+                        sibling.right_child is None or sibling.right_child.color == "Black"):
                     if sibling:
                         sibling.color = "Red"
                     node = node.parent
@@ -252,47 +242,3 @@ class RBT(BST):
             self.root = b
 
         return b
-
-    def is_rbt_valid(self):
-        if self.root is None:
-            return True  # Пустое дерево всегда корректно
-
-        # Проверка правила 2: Корень должен быть черным
-        if self.root.color != "Black":
-            print("Root is not black")
-            return False
-
-        # Проверка правил 1, 3 и 4 (цвет узлов и черная высота)
-        return self._check_black_height(self.root) != -1
-
-    def _check_black_height(self, node):
-        if node is None:
-            return 1  # Лист является черным
-
-        # Проверка правила 1: Каждый узел либо красный, либо черный
-        if node.color not in ("Red", "Black"):
-            print(f"Node {node.key} has invalid color: {node.color}")
-            return -1
-
-        # Проверка правила 4: Нет двух последовательных красных узлов
-        if node.color == "Red":
-            if (node.left_child and node.left_child.color == "Red") or (
-                    node.right_child and node.right_child.color == "Red"):
-                print(f"Red violation at node {node.key}")
-                return -1
-
-        # Рекурсивная проверка для детей
-        left_black_height = self._check_black_height(node.left_child)
-        right_black_height = self._check_black_height(node.right_child)
-
-        # Если одно из поддеревьев не корректно, возвращаем -1
-        if left_black_height == -1 or right_black_height == -1:
-            return -1
-
-        # Проверка правила 5: Черная высота должна быть одинаковой для всех путей
-        if left_black_height != right_black_height:
-            print(f"Black height violation at node {node.key}")
-            return -1
-
-        # Если узел черный, увеличиваем черную высоту
-        return left_black_height + (1 if node.color == "Black" else 0)

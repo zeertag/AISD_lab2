@@ -5,21 +5,19 @@ class AVL_T(BST):
     def update_params(self):
         walking_node = self.last
         while walking_node is not None:
-            walking_node.height = max(self.get_height(walking_node.left_child),
-                                      self.get_height(walking_node.right_child)) + 1
-            walking_node.balance = self.get_height(walking_node.left_child) - self.get_height(
+            walking_node.height = max(self._get_height(walking_node.left_child),
+                                      self._get_height(walking_node.right_child)) + 1
+            walking_node.balance = self._get_height(walking_node.left_child) - self._get_height(
                 walking_node.right_child)
 
             if abs(walking_node.balance) > 1:
                 self.balancing(walking_node)
-            # self.length = walking_node.height
             walking_node = walking_node.parent
 
-    def get_height(self, node):
+    def _get_height(self, node):
         return node.height if node is not None else 0
 
     def balancing(self, node):
-        # walking_node = self.last
         walking_node = node
         while walking_node is not None:
             if walking_node.balance > 1:
@@ -83,5 +81,5 @@ class AVL_T(BST):
     def update_node_params(self, node):
         if node is None:
             return
-        node.height = max(self.get_height(node.left_child), self.get_height(node.right_child)) + 1
-        node.balance = self.get_height(node.left_child) - self.get_height(node.right_child)
+        node.height = max(self._get_height(node.left_child), self._get_height(node.right_child)) + 1
+        node.balance = self._get_height(node.left_child) - self._get_height(node.right_child)
